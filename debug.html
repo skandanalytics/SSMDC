@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Appointment System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Inter, sans-serif;
+        }
+
+        body {
+            padding: 50px;
+            background: #f5f5f5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn {
+            background: #0F6CBF;
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #0F6CBF;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Test Appointment System</h1>
+    <br>
+
+    <button id="open-popup-btn" class="btn">Book Appointment</button>
+    <br><br>
+    <button id="logo-click" class="btn">Click 5 times for Admin</button>
+
+    <!-- Appointment Modal -->
+    <div id="appointment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Book Your Appointment</h2>
+            <form id="quick-appointment-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="popup-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="popup-phone" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="popup-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Time</label>
+                    <select id="popup-time" required>
+                        <option value="">Select Time</option>
+                        <option value="09:30 AM">09:30 AM</option>
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="04:30 PM">04:30 PM</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn" style="width:100%">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Admin Login</h2>
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="admin-password">
+                </div>
+                <button type="submit" class="btn" style="width:100%">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="modal">
+        <div class="modal-content" style="max-width:900px;">
+            <span class="close-modal">&times;</span>
+            <h2>Appointments Dashboard</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="appointments-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Loaded');
+
+            const appointmentModal = document.getElementById('appointment-modal');
+            const adminModal = document.getElementById('admin-modal');
+            const adminDashboard = document.getElementById('admin-dashboard');
+            const openPopupBtn = document.getElementById('open-popup-btn');
+            const logoClick = document.getElementById('logo-click');
+            const closeModals = document.querySelectorAll('.close-modal');
+
+            // Open Appointment
+            openPopupBtn.addEventListener('click', function() {
+                console.log('✅ Opening appointment popup');
+                appointmentModal.style.display = 'block';
+            });
+
+            // Logo Click Count
+            let logoClickCount = 0;
+            logoClick.addEventListener('click', function() {
+                logoClickCount++;
+                console.log('Logo clicks:', logoClickCount);
+                setTimeout(() => { logoClickCount = 0; }, 3000);
+                
+                if (logoClickCount === 5) {
+                    adminModal.style.display = 'block';
+                    logoClickCount = 0;
+                }
+            });
+
+            // Close Modals
+            closeModals.forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    appointmentModal.style.display = 'none';
+                    adminModal.style.display = 'none';
+                    adminDashboard.style.display = 'none';
+                });
+            });
+
+            // Close outside
+            window.addEventListener('click', function(e) {
+                if (e.target === appointmentModal) appointmentModal.style.display = 'none';
+                if (e.target === adminModal) adminModal.style.display = 'none';
+                if (e.target === adminDashboard) adminDashboard.style.display = 'none';
+            });
+
+            // Form Submit
+            document.getElementById('quick-appointment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('✅ Form submitted');
+                
+                const name = document.getElementById('popup-name').value;
+                const phone = document.getElementById('popup-phone').value;
+                const date = document.getElementById('popup-date').value;
+                const time = document.getElementById('popup-time').value;
+
+                const appointments = JSON.parse(localStorage.getItem('dentalAppointments') || '[]');
+                appointments.push({ name, phone, date, time, status: 'Pending' });
+                localStorage.setItem('dentalAppointments', JSON.stringify(appointments));
+
+                alert('✅ Appointment saved!');
+                appointmentModal.style.display = 'none';
+                this.reset();
+            });
+
+            // Admin Login
+            document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const password = document.getElementById('admin-password').value;
+                
+                if (password === 'admin123') {
+                    adminModal.style.display = 'none';
+                    adminDashboard.style.display = 'block';
+                    loadAppointments();
+                } else {
+                    alert('❌ Wrong password');
+                }
+            });
+
+            function loadAppointments() {
+                const appointments = JSON.parse(localStorage.getItem('dentalAppointments') || '[]');
+                const tableBody = document.getElementById('appointments-table-body');
+                
+                if (appointments.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center">No appointments</td></tr>';
+                    return;
+                }
+
+                tableBody.innerHTML = appointments.map(apt => `
+                    <tr>
+                        <td>${apt.name}</td>
+                        <td>${apt.phone}</td>
+                        <td>${apt.date}</td>
+                        <td>${apt.time}</td>
+                        <td>${apt.status}</td>
+                    </tr>
+                `).join('');
+            }
+        });
+    </script>
+
+</body>
+</html>
