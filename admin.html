@@ -10,6 +10,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #0F6CBF 0%, #0B5394 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: white;
+            padding: 48px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-box .lock-icon {
+            font-size: 3rem;
+            color: #0F6CBF;
+            margin-bottom: 16px;
+        }
+        .login-box h2 {
+            color: #0B5394;
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+        .login-box p {
+            color: #6B7280;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .login-box input:focus {
+            border-color: #0F6CBF;
+        }
+        .login-box .login-error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: none;
+        }
         .admin-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -124,6 +178,18 @@
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-box">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <h2>Admin Login</h2>
+            <p>Enter password to access the dashboard</p>
+            <input type="password" id="admin-password" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkAdminLogin()">
+            <div id="login-error" class="login-error">❌ Incorrect password. Try again.</div>
+            <button onclick="checkAdminLogin()" class="btn btn-primary" style="width:100%; justify-content:center;">Login</button>
+        </div>
+    </div>
+
     <div class="admin-container">
         <a href="index.html" class="back-link">
             <i class="fas fa-arrow-left"></i> Back to Website
@@ -162,8 +228,26 @@
 
     <script src="js/script.js"></script>
     <script>
+        const ADMIN_PASSWORD = 'admin123';
+
+        function checkAdminLogin() {
+            const password = document.getElementById('admin-password').value;
+            const errorEl = document.getElementById('login-error');
+            
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('login-screen').style.display = 'none';
+                errorEl.style.display = 'none';
+                loadAppointmentsFromServer();
+            } else {
+                errorEl.style.display = 'block';
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-password').focus();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            loadAppointmentsFromServer();
+            // Focus on password input when page loads
+            document.getElementById('admin-password').focus();
         });
 
         async function loadAppointmentsFromServer() {
@@ -171,7 +255,7 @@
             tableBody.innerHTML = '<tr><td colspan="7" class="loading">Loading appointments...</td></tr>';
             
             try {
-                const response = await fetch('http://192.168.68.103:5000/api/appointments', {
+                const response = await fetch('/api/appointments', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -228,7 +312,7 @@
 
         async function updateAppointmentStatus(id, status) {
             try {
-                await fetch(`http://192.168.68.103:5000/api/appointments/${id}`, {
+                await fetch(`/api/appointments/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status })
@@ -245,7 +329,7 @@
             }
             
             try {
-                await fetch('http://192.168.68.103:5000/api/appointments', { 
+                await fetch('/api/appointments', { 
                     method: 'DELETE' 
                 });
                 loadAppointmentsFromServer();
