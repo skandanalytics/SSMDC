@@ -1,0 +1,24 @@
+{
+  "appointments": [
+    {
+      "id": 1782277583487,
+      "name": "manu",
+      "phone": "7022260789",
+      "email": "manoj@gmail.com",
+      "date": "2026-06-24",
+      "time": "04:30 PM",
+      "status": "Pending",
+      "createdAt": "24/6/2026, 10:36:23 am"
+    },
+    {
+      "id": 1782284849329,
+      "name": "manu",
+      "phone": "9845596544",
+      "email": "manu@gmail.com",
+      "date": "2026-06-25",
+      "time": "05:00 PM",
+      "status": "Pending",
+      "createdAt": "24/6/2026, 12:37:29 pm"
+    }
+  ]
+}
