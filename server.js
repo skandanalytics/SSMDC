@@ -5,9 +5,10 @@ const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
+const os = require('os');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -275,9 +276,22 @@ app.post('/api/send-email', async (req, res) => {
     }
 });
 
+function getLocalIP() {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return 'localhost';
+}
+
 app.listen(PORT, '0.0.0.0', () => {
+    const localIP = getLocalIP();
     console.log(`✅ Server running on http://localhost:${PORT}`);
-    console.log(`✅ Network access: http://192.168.68.103:${PORT}`);
+    console.log(`✅ Network access: http://${localIP}:${PORT}`);
     console.log(`✅ API Endpoints:`);
     console.log(`   GET    /api/appointments`);
     console.log(`   POST   /api/appointments`);
